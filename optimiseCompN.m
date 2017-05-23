@@ -1,7 +1,9 @@
 %clear all;
+Sf = NaturalImages(0.4,1)
+LoadConstants
 
 DPoints=10;
-NPoints=20;
+NPoints=30;
 
 Da=[];
 Na=[];
@@ -11,16 +13,18 @@ Hmaxa = [];
 inv0a = [];
 inv2an=[];
 
-Darray = linspace(15,35,DPoints);
-Narray = linspace(100,150000,NPoints);
+Darray = linspace(15,40,DPoints);
+Narray = logspace(4,5,NPoints);
 cagada=0;
 Narray2 = linspace(3,6,50)
 Harray2 = zeros(20,50)
 
 invi=0;
-k = 4.3e-3
-f_number =2
-c=0.5e-10
+
+c=0.7e-10
+%c=1e-10
+%c=10e-10
+%c=0.0
 
 for inv=logspace(-1,1,20)
 invi=invi+1;
@@ -30,7 +34,7 @@ Dmax =-1;
 Nmax =-1;
 for iD=1:DPoints
     for iN = 1:NPoints
-        H(iD,iN) = InfCompN(Darray(iD),Narray(iN), Sf, inv, k,f_number,c);
+        H(iD,iN) = InfCompN(Darray(iD),Narray(iN), Sf, inv, c);
         if H(iD,iN)>Hmax
             Hmax = H(iD,iN);
             Dmax=Darray(iD);
@@ -40,11 +44,11 @@ for iD=1:DPoints
 end
 
 options = optimset('TolX',.0001);
-fH = @(x) -InfCompN( x(1), x(2),Sf, inv, k,f_number,c );
+fH = @(x) -InfCompN( x(1), x(2),Sf, inv,c );
 [y,H] = fminsearch(fH,[Dmax, Nmax], options);
 
 
-if (InfCompN( Dmax, Nmax, Sf, inv, k,f_number,c ) > InfCompN( y(1), y(2),Sf, inv, k,f_number,c))
+if (InfCompN( Dmax, Nmax, Sf, inv,c ) > InfCompN( y(1), y(2),Sf, inv, c))
     cagada = cagada+1
     y(1)=Dmax;
     y(2)=Nmax;

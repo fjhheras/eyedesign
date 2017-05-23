@@ -1,9 +1,9 @@
 function information_rate = InformationRate( D, Ntu, S_f,f,Deltaphi, alias_fraction)
-% Information of an eye with given characteristics
+% Information of an eye with given characteristics per Hz and per sr
 
-min_ft = 1; %Lower limit of time frequencies - Hz
-max_ft = 300; %Upper limit of time frequencies - Hz
-min_fr = 1/2/pi; %Lower limit of spatial frequencies, one cycle per 2pi - rad-1
+min_ft = 1.0; %Lower limit of time frequencies - Hz
+max_ft = 300.0; %Upper limit of time frequencies - Hz
+min_fr = 0;1/2/pi; %Lower limit of spatial frequencies, one cycle per 2pi - rad-1
 
 d = 1.9; %rhabdomere diameter - um
 lambda = 0.5; %wavelenght of yellow light - um
@@ -31,16 +31,18 @@ signal_variance = integral2(signal_integrand,min_fr,fb,min_ft,max_ft,'RelTol', 5
 photon_noise_power = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)/intsampled*2/coeffpoisson;
 photon_noise_integrand = @(ft) 2./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)*2/coeffpoisson;
 photon_noise_variance = integral(photon_noise_integrand,min_ft,max_ft,'RelTol', 5e-4, 'AbsTol',1);
-photon_noise_variance/signal_variance;
+
 % Internal noise has the power spectrum shape of the signal, because we assume
 % whitening before noise. It has the same power of photon noise.
-internal_noise = @(fr,ft) signal_power(fr,ft)*photon_noise_variance/signal_variance; 
+internal_noise = @(fr,ft) 0; 
+%internal_noise = @(fr,ft) signal_power(fr,ft)*photon_noise_variance/signal_variance; 
+
 % A fraction (alias_fraction) of aliasing is considered noise 
 aliased_power = @(fr,ft) alias_fraction.*signal_power(2*fb-fr,ft);
 
 %% Information rates
-H_integrand = @(fr,ft) pi*fr.*log( 1 + signal_power(fr,ft) ./ (photon_noise_power(ft) + internal_noise(fr,ft) + aliased_power(fr,ft))  );
-information_rate = integral2(H_integrand,min_fr,fb,min_ft,max_ft,'RelTol', 1e-3, 'AbsTol',1000);
+H_integrand = @(fr,ft) fr.*log2( 1 + signal_power(fr,ft) ./ (photon_noise_power(ft) + internal_noise(fr,ft) + aliased_power(fr,ft))  );
+information_rate = 2*sqrt(3)*integral2(H_integrand,min_fr,fb,min_ft,max_ft,'RelTol', 1e-3, 'AbsTol',1000);
 
 end
 
