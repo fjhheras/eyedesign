@@ -1,5 +1,5 @@
 function information_rate = InformationRate( D, Ntu, S_f,f,Deltaphi, alias_fraction)
-% Information of an eye with given characteristics per Hz and per sr
+% Information of an eye with given characteristics, bits per Hz and per sr
 
 min_ft = 1.0; %Lower limit of time frequencies - Hz
 max_ft = 300.0; %Upper limit of time frequencies - Hz
@@ -13,10 +13,10 @@ MicrovilliRecycleTime = 0.02; %0.02; %sec
 
 Deltarho2 =  lambda*lambda/D/D + d*d/f/f; %Normal one
 %Deltarho2 =  1.5*lambda*lambda/D/D
-coeffpoisson = Ntu/2/MicrovilliRecycleTime;
+coeffpoisson = Ntu/MicrovilliRecycleTime;
 
 fb = 1/Deltaphi/sqrt(3); %array sampling frequency (rad-1)
-intsampled = pi/2*fb*fb; %half a circle area of radius fb
+intsampled = pi*fb*fb; %circle area of radius fb, Eq 13 HS
 
 %% Filters
 lens_filter = @(fr) exp(-2*pi*pi/log(2)/4*(fr.*fr)*Deltarho2);
@@ -28,7 +28,7 @@ signal_power =  @(fr,ft) S_f(fr,ft).*lens_filter(fr).*signal_filter(ft);
 %% Photon Noise
 % Photon noise power. It depends on 2/coeffpoisson because we are in
 % contrast. The extra factor two is because at the top of saturation SNR is
-% half of what a poisson process with the same parameter
+% about half of what a poisson process with the same parameter
 photon_noise_power = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)/intsampled*2/coeffpoisson;
 
 %% Internal Noise
