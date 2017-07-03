@@ -1,8 +1,6 @@
-%N = 3000;
-%Nt = 250;
-%[S, fx, ft, Deltax, Deltat] = NatImagbigSH(N,Nt,0.4,1); %give me natural images stats with contrast 0.4 and speed 3 rad/s
 S = NaturalImages(0.4,1)
-%Narray = logspace(1,5,20);
+LoadConstants
+LoadCalliphoraV0
 
 Da=[];
 Na=[];
@@ -11,43 +9,22 @@ Ha=[];
 Hmaxa = [];
 inv0a=[];
 inv2as=[];
+inva=logspace(-1,1,20)*V0;
 
 %Nn=1e-4;
 %c=power(10,-9.7);
-%c=0;
-%inv = 1;
-%for c=logspace(-10.5,-8.5,20)
-for inv = logspace(-1,1,20)  
-   R0 = 31/(2*pi/180);
-   L0 = 250 + 60; %um
-   K0 = 3*L0*R0*R0 - 3*L0*L0*R0+L0*L0*L0; %it's a way of calculating the same material than in a compound
-   K0 = K0*inv/2;
-   k=4.3e-3;
+c=0;
 
+for inv =  inva
+  K1 = inv/(4*pi/3)
   options = optimset('TolX',.0001);
   fH = @(x) -InfSimp( x, S, inv, c);  
-  [y,H] = fminbnd(fH,0,nthroot(2*K0,3)/k,options);
+  [y,H] = fminbnd(fH,0,nthroot(K1,3)/k,options);
   Na=[Na,y];
     
-  f_number = 60/31;
-  d=1.9;
-  R0 = 31/(2*pi/180);
-  L0 = 250 + 60; %um
-  K0 = 3*L0*R0*R0 - 3*L0*L0*R0+L0*L0*L0; %it's a way of calculating the same material than in a compound eye
-  K1 = K0*inv
-  k = 4.3e-3
   L=y(1)*k;
-  n3=1.35;
-    
-  %R = nthroot(K0,3)-L;
-  
-  syms r;
-  R=vpasolve(K1-(r+L)^3-K1/inv*c*4*pi/d/d/(2*sqrt(3)/3)*r*r*y(1))
-  R = eval(R)
-  R = R(imag(R)==0);
-  R = R(R>0)
-  
-  inv0a = [inv0a,inv - c*4*pi/d/d/(2*sqrt(3)/3)*R*R*y(1)];
+  R = R_in_simple(inv,L,d,c,y(1),V0)
+  inv0a = [inv0a,old_inv - c*4*pi/d/d/(2*sqrt(3)/3)*R*R*y(1)];
   
   f = R/n3;
   D = f/f_number;

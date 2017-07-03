@@ -1,6 +1,7 @@
 %clear all;
 Sf = NaturalImages(0.4,1)
 LoadConstants
+LoadCalliphoraV0
 
 DPoints=10;
 NPoints=30;
@@ -18,15 +19,16 @@ Narray = logspace(4,5,NPoints);
 cagada=0;
 Narray2 = linspace(3,6,50)
 Harray2 = zeros(20,50)
+inva = logspace(-1,1,20) * V0
 
 invi=0;
 
-c=0.7e-10
+%c=0.7e-10
 %c=1e-10
 %c=10e-10
-%c=0.0
+c=0.0
 
-for inv=logspace(-1,1,20)
+for inv = inva
 invi=invi+1;
 Hmax=0;
 inv
@@ -57,13 +59,12 @@ end
 Da=[Da,y(1)];
 Na=[Na,y(2)];
 
-R0 = 31/(2*pi/180);
-L0 = 250 + 60; %um
-K0 = 3*L0*R0*R0 - 3*L0*L0*R0+L0*L0*L0;
-K1 = K0*inv
+%R0 = 31/(2*pi/180);
+%L0 = 250 + 60; %um
+%K0 = 3*L0*R0*R0 - 3*L0*L0*R0+L0*L0*L0;
+%K1 = K0*inv
 
-R=K2R(K1,y(1),y(2),c,f_number,k,6);
-
+R=K2R(inv/(4*pi/3),y(1),y(2),c,f_number,k,6);
 inv0=inv-6*c*4*pi*y(2)/y(1)/y(1)/(2*sqrt(3)/3)*R*R;
 inv2=R2K(R,y(1),y(2),0,f_number,k,6)/K0;%(R*R*R-(R-L)*(R-L)*(R-L))/K0
 
