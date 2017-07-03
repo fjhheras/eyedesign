@@ -1,16 +1,13 @@
 function [ R ] = K2R( K,D,N,c,f_number,k,b )
-%Radious R for an eye of volume divided by pi3/4 
+%Radius R for an eye of certain volume  
 %
-% 
+% K volume divided by 4 pi /3
 % D facet diameter
 % N number of transduction units per ph
 % c factor
 % b multiplier for tr units in ph. 3 for Comp, 6 for CompN
 
-R0 = 31/(2*pi/180);
-L0 = 250 + 60; %um
-K0 = 3*L0*R0*R0 - 3*L0*L0*R0 + L0*L0*L0;
-
+LoadCalliphoraV0;
 n3=1.35;
 
 K1 = K;

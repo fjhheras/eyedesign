@@ -4,7 +4,7 @@ LoadConstants
 LoadCalliphoraV0
 
 DPoints=10;
-NPoints=30;
+NPoints=40;
 
 Da=[];
 Na=[];
@@ -15,9 +15,9 @@ inv0a = [];
 inv2an=[];
 
 Darray = linspace(15,40,DPoints);
-Narray = logspace(4,5,NPoints);
+Narray = logspace(4,5.5,NPoints);
 cagada=0;
-Narray2 = linspace(3,6,50)
+%Narray2 = linspace(3,6,50)
 Harray2 = zeros(20,50)
 inva = logspace(-1,1,20) * V0
 

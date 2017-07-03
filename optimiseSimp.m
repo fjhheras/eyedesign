@@ -24,6 +24,7 @@ for inv =  inva
     
   L=y(1)*k;
   R = R_in_simple(inv,L,d,c,y(1),V0)
+  old_inv = inv/V0
   inv0a = [inv0a,old_inv - c*4*pi/d/d/(2*sqrt(3)/3)*R*R*y(1)];
   
   f = R/n3;
