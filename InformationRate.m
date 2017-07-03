@@ -17,26 +17,34 @@ coeffpoisson = Ntu/2/MicrovilliRecycleTime;
 
 fb = 1/Deltaphi/sqrt(3); %array sampling frequency (rad-1)
 intsampled = pi/2*fb*fb; %half a circle area of radius fb
+
 %% Filters
 lens_filter = @(fr) exp(-2*pi*pi/log(2)/4*(fr.*fr)*Deltarho2);
 signal_filter = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)*1./power(1+(2*pi*LatencyWidth*ft).*(2*pi*LatencyWidth*ft),2);
+
 %% Signal
 signal_power =  @(fr,ft) S_f(fr,ft).*lens_filter(fr).*signal_filter(ft);
-signal_integrand = @(fr,ft) 2*pi*fr.*signal_power(fr,ft);
-signal_variance = integral2(signal_integrand,min_fr,fb,min_ft,max_ft,'RelTol', 5e-4, 'AbsTol',1);
-%% Noise
+
+%% Photon Noise
 % Photon noise power. It depends on 2/coeffpoisson because we are in
 % contrast. The extra factor two is because at the top of saturation SNR is
 % half of what a poisson process with the same parameter
 photon_noise_power = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)/intsampled*2/coeffpoisson;
-photon_noise_integrand = @(ft) 2./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)*2/coeffpoisson;
-photon_noise_variance = integral(photon_noise_integrand,min_ft,max_ft,'RelTol', 5e-4, 'AbsTol',1);
 
+%% Internal Noise
 % Internal noise has the power spectrum shape of the signal, because we assume
-% whitening before noise. It has the same power of photon noise.
-internal_noise = @(fr,ft) 0; 
+% whitening before noise. It has the same power of photon noise. Uncommnent
+% this if you want to use it:
+%signal_integrand = @(fr,ft) 2*pi*fr.*signal_power(fr,ft);
+%signal_variance = integral2(signal_integrand,min_fr,fb,min_ft,max_ft,'RelTol', 5e-4, 'AbsTol',1);
+%photon_noise_integrand = @(ft) 2./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)*2/coeffpoisson;
+%photon_noise_variance = integral(photon_noise_integrand,min_ft,max_ft,'RelTol', 5e-4, 'AbsTol',1);
 %internal_noise = @(fr,ft) signal_power(fr,ft)*photon_noise_variance/signal_variance; 
 
+% Or uncomment the following for 0 internal noise
+internal_noise = @(fr,ft) 0; 
+
+%% Aliasing
 % A fraction (alias_fraction) of aliasing is considered noise 
 aliased_power = @(fr,ft) alias_fraction.*signal_power(2*fb-fr,ft);
 
