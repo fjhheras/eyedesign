@@ -7,15 +7,11 @@ function [ K ] = R2K( R,D,N,c,f_number,k,b)
 % c factor
 % b multiplier for tr units in ph. 3 for Comp, 6 for CompN
 
-R0 = 31/(2*pi/180);
-L0 = 250 + 60; %um
-K0 = 3*L0*R0*R0 - 3*L0*L0*R0 + L0*L0*L0; %K0 is K for Calliphora
-
 n3=1.35;
 
 L=N*k+D*f_number*n3;
 
-K = 3*L.*R.*R - 3*L.*L.*R + L.*L.*L + K0*b*c*4*pi*N./D./D./(2*sqrt(3)/3).*R.*R;
+K = 3*L.*R.*R - 3*L.*L.*R + L.*L.*L + V_equiv_energy_cost(c,b,D,N,R); %K0*b*c*4*pi*N./D./D./(2*sqrt(3)/3).*R.*R;
     
   
 
