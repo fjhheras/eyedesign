@@ -2,14 +2,14 @@ function information_rate = InformationRate( D, Ntu, S_f,f,Deltaphi, alias_fract
 % Information of an eye with given characteristics, bits per Hz and per sr
 
 min_ft = 1.0; %Lower limit of time frequencies - Hz
-max_ft = 300.0; %Upper limit of time frequencies - Hz
+max_ft = 3000.0; %300.0; %Upper limit of time frequencies - Hz
 min_fr = 0;1/2/pi; %Lower limit of spatial frequencies, one cycle per 2pi - rad-1
 
 d = 1.9; %rhabdomere diameter - um
 lambda = 0.5; %wavelenght of yellow light - um
 ImpulseWidth = 0.001; %0.001 sec -> for a fall of one order of magnitude at 170Hz 0.01 sec -> bslow 0.0001 sec -> bfast
 LatencyWidth = 0.0014; %0.0014 sec -> for a corner frequency of 71Hz 0.0025 -> scan(2) 0.01 -> slow 0.02 -> slow2 0.04 -> slow3 0.1 -> superslow 0.00001 -> nolimit
-MicrovilliRecycleTime = 0.02; %0.02; %sec
+MicrovilliRecycleTime = 0.03; %0.02; %sec
 
 Deltarho2 =  lambda*lambda/D/D + d*d/f/f; %Normal one
 %Deltarho2 =  1.5*lambda*lambda/D/D
@@ -21,6 +21,7 @@ intsampled = pi*fb*fb; %circle area of radius fb, Eq 13 HS
 %% Filters
 lens_filter = @(fr) exp(-2*pi*pi/log(2)/4*(fr.*fr)*Deltarho2);
 signal_filter = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)*1./power(1+(2*pi*LatencyWidth*ft).*(2*pi*LatencyWidth*ft),2);
+photon_noise_filter = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12);
 
 %% Signal
 signal_power =  @(fr,ft) S_f(fr,ft).*lens_filter(fr).*signal_filter(ft);
@@ -29,7 +30,7 @@ signal_power =  @(fr,ft) S_f(fr,ft).*lens_filter(fr).*signal_filter(ft);
 % Photon noise power. It depends on 2/coeffpoisson because we are in
 % contrast. The extra factor two is because at the top of saturation SNR is
 % about half of what a poisson process with the same parameter
-photon_noise_power = @(ft) 1./power(1+(2*pi*ImpulseWidth*ft).*(2*pi*ImpulseWidth*ft),3.12)/intsampled*2/coeffpoisson;
+photon_noise_power = @(ft) 1/intsampled*2/coeffpoisson.*photon_noise_filter(ft);
 
 %% Internal Noise
 % Internal noise has the power spectrum shape of the signal, because we assume

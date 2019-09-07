@@ -1,37 +1,48 @@
+function [Da, Na, Ra, Ha, volume_a] = optimiseCompN(c)
+
 %clear all;
 Sf = NaturalImages(0.4,1)
+%Sf = FlatSpectrum(0.4)
 LoadConstants
 LoadCalliphoraV0
 
-DPoints=10;
-NPoints=40;
+DPoints=100;
+NPoints=200;
+invpoints=20
 
-Da=[];
-Na=[];
-Ra=[];
-Ha=[];
-Hmaxa = [];
-inv0a = [];
-inv2an=[];
-
-Darray = linspace(15,40,DPoints);
-Narray = logspace(4,5.5,NPoints);
+%Darray = linspace(15,100,DPoints);
+Darray = logspace(1,2,DPoints);
 cagada=0;
 %Narray2 = linspace(3,6,50)
-Harray2 = zeros(20,50)
-inva = logspace(-1,1,20) * V0
+inva = logspace(-1,2.1,invpoints) * V0
+%Harray2 = zeros(20,50)
 
-invi=0;
+
+Da=zeros(size(inva));
+Na=zeros(size(inva));
+Ra=zeros(size(inva));
+Ha=zeros(size(inva));
+Hmaxa = zeros(size(inva));
+volume_a = zeros(size(inva));
+volume_debugging_a = zeros(size(inva));
+
 
 %c=0.7e-10
 %c=1e-10
 %c=10e-10
-c=0.0
+%c=0.0
+%c = c*V0
 
+
+invi=0;
 for inv = inva
 invi=invi+1;
-Hmax=0;
 inv
+
+%Narray = logspace(2.5,6.0,NPoints);
+maxpossibleL = nthroot(inv / (4*pi/3),3);
+Narray = logspace(2.5,log10(maxpossibleL/k),NPoints);
+Hmax=0;
 Dmax =-1;
 Nmax =-1;
 for iD=1:DPoints
@@ -45,10 +56,12 @@ for iD=1:DPoints
     end
 end
 
-options = optimset('TolX',.0001);
+options = optimset('TolX',.001);
 fH = @(x) -InfCompN( x(1), x(2),Sf, inv,c );
 [y,H] = fminsearch(fH,[Dmax, Nmax], options);
-
+Ha(invi) = -H;
+Da(invi) = y(1);
+Na(invi) = y(2);
 
 if (InfCompN( Dmax, Nmax, Sf, inv,c ) > InfCompN( y(1), y(2),Sf, inv, c))
     cagada = cagada+1
@@ -56,32 +69,20 @@ if (InfCompN( Dmax, Nmax, Sf, inv,c ) > InfCompN( y(1), y(2),Sf, inv, c))
     y(2)=Nmax;
 end
 
-Da=[Da,y(1)];
-Na=[Na,y(2)];
+R = K2R(inv/(4*pi/3),y(1),y(2),c,f_number,k,6, n3);
+volume_a(invi) = inv - V_equiv_energy_cost(c,6,y(1),y(2),R ); %6*c*4*pi*y(2)/y(1)/y(1)/(2*sqrt(3)/3)*R*R
+volume_debugging_a(invi) = R2K(R,y(1),y(2),0,f_number,k,6,n3)*4*pi/3; %(R*R*R-(R-L)*(R-L)*(R-L))/K0
 
-%R0 = 31/(2*pi/180);
-%L0 = 250 + 60; %um
-%K0 = 3*L0*R0*R0 - 3*L0*L0*R0+L0*L0*L0;
-%K1 = K0*inv
+%% DEBUGGING - Uncomment this to test K2R with RK2
+should_be_one = K2R(R2K(R,y(1),y(2),0,f_number,k,6,n3),y(1),y(2),0,f_number,k,6,n3)/R
+%%
 
-R = K2R(inv/(4*pi/3),y(1),y(2),c,f_number,k,6);
-inv0= inv - V_equiv_energy_cost(c,6,y(1),y(2),R ); %6*c*4*pi*y(2)/y(1)/y(1)/(2*sqrt(3)/3)*R*R
-inv2 = R2K(R,y(1),y(2),0,f_number,k,6)/K0; %(R*R*R-(R-L)*(R-L)*(R-L))/K0
-
-
-Ra=[Ra,R];
-Ha=[Ha,-H];
-Hmaxa = [Hmaxa, Hmax];
-inv0a=[inv0a,inv0];
-inv2an=[inv2an,inv2];
+Ra(invi) = R;
+Hmaxa(invi) = Hmax; 
 end
 
 
-%c=logspace(-7,-5,40)
 pa=Da.*Da./Ra;
-%inv=0.1:0.2:3
-n3=1.35;
-La = Na*k + Da*f_number*n3;
+La = Na*k;% + cone_length(Da,f_number,n3);
 
-%surf(Narray, Darray,H./cost.*Deltaphi.*Deltaphi)
-%surf(Narray, Darray,H) %if we fix cost by fixing volume, dividing by cost again is not necessary (and it's wrong cos R is no longer ctant)
+
