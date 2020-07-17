@@ -13,6 +13,8 @@ MicrovilliRecycleTime = 0.03; %0.02; %sec
 
 Deltarho2 =  lambda*lambda/D/D + d*d/f/f; %Normal one
 %Deltarho2 =  1.5*lambda*lambda/D/D
+%Deltarho2 =  lambda*lambda/D/D
+
 coeffpoisson = Ntu/MicrovilliRecycleTime;
 
 fb = 1/Deltaphi/sqrt(3); %array sampling frequency (rad-1)

@@ -1,7 +1,6 @@
 function H = InfCompN (D, Ntu, S, inv, c)
 % Output: bits per Hz and per sr
 
-
 LoadConstants
 
 K1 = inv/(4*pi/3); % It is easier to work with this number, rather than with volume

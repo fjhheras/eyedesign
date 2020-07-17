@@ -16,7 +16,7 @@ Haa = zeros(numc, num_inv);
 volume_aa = zeros(numc, num_inv);
 %parfor
 parfor i = 1:numc
-    [Da, Na, Ra, Ha, volume_a] = optimiseCompN(c(i), inva)
+    [Da, Na, Ra, Ha, volume_a] = optimiseComp(c(i), inva, 'app')
     Naa(i,:) = Na
     Daa(i,:) = Da
     Haa(i,:) = Ha
