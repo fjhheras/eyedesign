@@ -1,5 +1,5 @@
 function H = InfComp (D, Ntu, S, inv, c, eye_type)
-% Output: bits per Hz and per sr
+% Output: bits per s and per sr
 
 LoadConstants
 

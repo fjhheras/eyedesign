@@ -15,12 +15,12 @@ LoadConstants
 %LoadCalliphoraV0
 
 %% Parameters for fast test
-DPoints=40;
-NPoints=15;
+%DPoints=40;
+%NPoints=15;
 
 %% Parameter values for long computation
-%DPoints=200;
-%NPoints=50;
+DPoints=250;
+NPoints=80;
 
 %% Building arrays
 Darray = logspace(0.5,2.5,DPoints);
@@ -63,7 +63,7 @@ for inv = inva
     
     % Taking the best among the ones tried, we use it
     % as starting point of the optimization
-    options = optimset('TolX',.001);
+    options = optimset('TolX',1e-7);
     fH = @(x) -InfComp( x(1), x(2), Sf, inv,c, eye_type);
     [y,H] = fminsearch(fH,[Dmax, Nmax], options);
     Ha(invi) = -H;

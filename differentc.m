@@ -16,7 +16,7 @@ Haa = zeros(numc, num_inv);
 volume_aa = zeros(numc, num_inv);
 %parfor
 parfor i = 1:numc
-    [Da, Na, Ra, Ha, volume_a] = optimiseComp(c(i), inva, 'app')
+    [Da, Na, Ra, Ha, volume_a] = optimiseComp(c(i), inva, 'fly')
     Naa(i,:) = Na
     Daa(i,:) = Da
     Haa(i,:) = Ha
@@ -25,6 +25,13 @@ parfor i = 1:numc
 end
 
 um3_to_mm3_per_sr = 1e-9 / (4 * pi)
+
+csvwrite('num_mvilli.csv',Naa)
+csvwrite('lens_d_um.csv',Daa)
+csvwrite('information.csv',Haa)
+csvwrite('radius_um.csv',Raa)
+csvwrite('investment_mm3.csv',inva)
+csvwrite('extra_cost_um3_per_microvilli.csv', c)
 
 figure(1)
 
@@ -54,3 +61,13 @@ for i = 1:numc
 end
 xlabel('Volume mm3/sr')
 ylabel('Eye parameter (um)')
+
+
+figure(4)
+
+for i = 1:numc
+    loglog(volume_aa(i,:)*um3_to_mm3_per_sr, Daa(i,:))
+    hold on
+end
+xlabel('Volume mm3/sr')
+ylabel('Lens diameter (um)')

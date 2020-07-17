@@ -1,5 +1,5 @@
 function information_rate = InformationRate( D, Ntu, S_f,f,Deltaphi, alias_fraction)
-% Information of an eye with given characteristics, bits per Hz and per sr
+% Information of an eye with given characteristics, bits per s and per sr
 
 min_ft = 1.0; %Lower limit of time frequencies - Hz
 max_ft = 3000.0; %300.0; %Upper limit of time frequencies - Hz
