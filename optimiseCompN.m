@@ -16,7 +16,6 @@ NPoints=15;
 
 %% Building arrays
 Darray = logspace(0.5,2.5,DPoints);
-cagada=0;
 
 
 Da=zeros(size(inva));
@@ -29,6 +28,7 @@ volume_debugging_a = zeros(size(inva));
 
 %% Loop
 invi=0;
+errors=0;
 for inv = inva
     invi=invi+1;
     inv
@@ -49,7 +49,9 @@ for inv = inva
             end
         end
     end
-
+    
+    % Taking the best among the ones tried, we use it
+    % as starting point of the optimization
     options = optimset('TolX',.001);
     fH = @(x) -InfCompN( x(1), x(2),Sf, inv,c );
     [y,H] = fminsearch(fH,[Dmax, Nmax], options);
@@ -58,7 +60,7 @@ for inv = inva
     Na(invi) = y(2);
 
     if (InfCompN( Dmax, Nmax, Sf, inv,c ) > InfCompN( y(1), y(2),Sf, inv, c))
-        cagada = cagada+1
+        errors = errors+1
         y(1)=Dmax;
         y(2)=Nmax;
     end
