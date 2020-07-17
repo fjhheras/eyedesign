@@ -1,5 +1,6 @@
 function H = InfCompN (D, Ntu, S, inv, c)
-%
+% Output: bits per Hz and per sr
+
 
 LoadConstants
 
@@ -7,19 +8,20 @@ K1 = inv/(4*pi/3); % It is easier to work with this number, rather than with vol
 L=Ntu*k+cone_length(D,f_number,n3);
 
 
-if ((K2Rdelta(K1,D,Ntu,c,f_number,k,6,n3) < 0)|(L<0)) %3,6
+if ((K2Rdelta(K1, D, Ntu, c, f_number, k, 6, n3) < 0)|(L < 0)) %3,6
+    % Invalid geometrical configuration
     H = -1;
 else
     
-    R=K2R(K1,D,Ntu,c,f_number,k,6,n3); %R=(3*L*L + sqrt(9*L*L*L*L - 12*(L+6*(4*pi/3)*(K1)*c*Ntu/D/D/(2*sqrt(3)/3))*(L*L*L - K0)))/(6*(L+6*(4*pi/3)*(K1)*c*Ntu/D/D/(2*sqrt(3)/3)))
-
+    R=K2R(K1,D,Ntu,c,f_number,k,6,n3); 
+    
     if (R < L+R*3*d/D)
         H = -1;
+        % Invalid geometrical configuration
     else
         Deltaphi = D/R; %rad
         f=D*f_number;
         H = InformationRate(D, 6*Ntu, S,f,Deltaphi, 1);
-        %H=H*2*sqrt(3)/pi/pi;
     end
 end
 end
