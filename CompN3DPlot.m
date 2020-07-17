@@ -26,9 +26,10 @@ end
 
 %% Log plot in number of microvilli
 surf(log10(Narray), Darray,H)
-
+xlabel('log number microvilli')
+ylabel('Lens diameter (um)')
+zlabel('Information rate (bit Hz/sr)')
 %% Linear plot in both number of microvilli and lens diameter
 %surf(Narray, Darray,H)
 
-pause
 

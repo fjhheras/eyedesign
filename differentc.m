@@ -1,13 +1,22 @@
-LoadCalliphoraV0
-%c = [0 1e-12 3e-12 1e-11 0.3e-10 1e-10 3e-10 1e-9]*V0
+% Extra cost of photoreceptor material in equivalent volume
+% Units um3 / microvilli
+% Note: in paper estimated 6e-11 - 3.5e-10 in mm3/microvilli 
+% which is 0.06 - 0.35
 c = [0 0.04 0.08 0.16 0.32 0.64]
-numc = 6
-Naa = zeros(numc, 20)
-Daa = zeros(numc, 20)
-Haa = zeros(numc, 20)
-volume_aa = zeros(numc, 20)
+numc = length(c)
+
+% Goal: 3e‑6 to 1.5e2 mm3/sr, 3.8e4 to 1.9e12 um3
+% Avoiding low range and compensating for cost
+inva = logspace(6.5, 12.5, 20)
+num_inv = length(inva)
+
+Naa = zeros(numc, num_inv);
+Daa = zeros(numc, num_inv);
+Haa = zeros(numc, num_inv);
+volume_aa = zeros(numc, num_inv);
+%parfor
 parfor i = 1:numc
-    [Da, Na, Ra, Ha, volume_a] = optimiseCompN(c(i))
+    [Da, Na, Ra, Ha, volume_a] = optimiseCompN(c(i), inva)
     Naa(i,:) = Na
     Daa(i,:) = Da
     Haa(i,:) = Ha
