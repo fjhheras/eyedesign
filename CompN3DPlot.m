@@ -27,3 +27,6 @@ end
 
 surf(log10(Narray), Darray,H)
 %surf(Narray, Darray,H) %if we fix cost by fixing volume, dividing by cost again is not necessary (and it's wrong cos R is no longer ctant)
+
+pause
+

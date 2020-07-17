@@ -6,15 +6,17 @@ Sf = NaturalImages(0.4,1)
 LoadConstants
 LoadCalliphoraV0
 
-DPoints=100;
-NPoints=200;
+DPoints=10;
+NPoints=20;
+%DPoints=400;
+%NPoints=400;
 invpoints=20
 
 %Darray = linspace(15,100,DPoints);
-Darray = logspace(1,2,DPoints);
+Darray = logspace(-1,2,DPoints);
 cagada=0;
 %Narray2 = linspace(3,6,50)
-inva = logspace(-1,2.1,invpoints) * V0
+inva = logspace(-4,2.8,invpoints) * V0
 %Harray2 = zeros(20,50)
 
 
@@ -82,7 +84,6 @@ Hmaxa(invi) = Hmax;
 end
 
 
-pa=Da.*Da./Ra;
-La = Na*k;% + cone_length(Da,f_number,n3);
-
-
+%pa=Da.*Da./Ra;
+%La = Na*k;% + cone_length(Da,f_number,n3);
+%pause
