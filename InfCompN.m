@@ -1,5 +1,6 @@
 function H = InfCompN (D, Ntu, S, inv, c)
 % Output: bits per Hz and per sr
+% DEPRECATED: Use InfComp with option 'fly'
 
 LoadConstants
 

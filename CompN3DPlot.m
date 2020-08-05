@@ -3,19 +3,20 @@ Sf = NaturalImages(0.4,1)
 LoadConstants
 LoadCalliphoraV0
 
-DPoints=20;
-NPoints=80;
+DPoints=40;
+NPoints=150;
 
 Darray = linspace(12,45,DPoints);
-Narray = logspace(2,5.2,NPoints);
+Narray = logspace(2,5.1,NPoints);
 
 %c=0.7e-10
 %c=1e-10
 %c_a=[0.0 0.05 0.1 0.5]
-c=0.5
-% 4e9 microvilli in the whole Calliphora eye
+c=0.13
 
+% 4e9 microvilli in the whole Calliphora eye
 inv = V0 + c * 4e9
+
 H=[];
 for iD=1:DPoints
     for iN = 1:NPoints
