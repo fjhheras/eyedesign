@@ -77,19 +77,14 @@ for inv = inva
         y(2)=Nmax;
     end
 
-R = K2R(inv/(4*pi/3),y(1),y(2),c,f_number,k,b, n3);
-volume_a(invi) = inv - V_equiv_energy_cost(c,b,y(1),y(2),R ); 
-volume_debugging_a(invi) = R2K(R,y(1),y(2),0,f_number,k,b,n3)*4*pi/3; 
+    R = K2R(inv/(4*pi/3),y(1),y(2),c,f_number,k,b, n3);
+    volume_a(invi) = inv - V_equiv_energy_cost(c,b,y(1),y(2),R ); 
+    volume_debugging_a(invi) = R2K(R,y(1),y(2),0,f_number,k,b,n3)*4*pi/3; 
 
-%% DEBUGGING - Uncomment this to test K2R with RK2
-should_be_one = K2R(R2K(R,y(1),y(2),0,f_number,k,b,n3),y(1),y(2),0,f_number,k,b,n3)/R
-%%
+    %% DEBUGGING - Uncomment this to test K2R with RK2
+    should_be_one = K2R(R2K(R,y(1),y(2),0,f_number,k,b,n3),y(1),y(2),0,f_number,k,b,n3)/R
+    %%
 
-Ra(invi) = R;
-Hmaxa(invi) = Hmax; 
+    Ra(invi) = R;
+    Hmaxa(invi) = Hmax; 
 end
-
-
-%pa=Da.*Da./Ra;
-%La = Na*k;% + cone_length(Da,f_number,n3);
-%pause

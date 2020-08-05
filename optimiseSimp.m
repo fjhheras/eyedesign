@@ -1,41 +1,65 @@
-S = NaturalImages(0.4,1)
+function [Da, Na, Ra, Ha, volume_a] = optimiseSimp(c, inva)
+
+Sf = NaturalImages(0.4,1)
 LoadConstants
-LoadCalliphoraV0
 
-Da=[];
-Na=[];
-Ra=[];
-Ha=[];
-Hmaxa = [];
-inv0a=[];
-inv2as=[];
-inva=logspace(-1,1,20)*V0;
+%% Parameters for fast test
+%NPoints=15;
 
-%Nn=1e-4;
-%c=power(10,-9.7);
-c=0;
+%% Parameter values for long computation
+NPoints=80;
 
-for inv =  inva
-  K1 = inv/(4*pi/3)
-  options = optimset('TolX',.0001);
-  fH = @(x) -InfSimp( x, S, inv, c);  
-  [y,H] = fminbnd(fH,0,nthroot(K1,3)/k,options);
-  Na=[Na,y];
+%% Building arrays
+Da=zeros(size(inva));
+Na=zeros(size(inva));
+Ra=zeros(size(inva));
+Ha=zeros(size(inva));
+Hmaxa = zeros(size(inva));
+volume_a = zeros(size(inva));
+volume_debugging_a = zeros(size(inva));
+
+%% Loop
+invi=0;
+
+for inv = inva
+    invi=invi+1;
+    inv
+
+    % Calculating an array of num microvilli to sample
+    maxpossibleL = nthroot(inv / (4*pi/3),3);
+    Narray = logspace(2.5,log10(maxpossibleL/k),NPoints);
+
+
+    % Sampling a matrix of values to find a starting point for optimization
+    Hmax=0;
+    Dmax = -1;
+    Nmax = -1;
+    for iN = 1:NPoints
+        H(iN) = InfSimp(Narray(iN), Sf, inv, c);
+        if H(iN)>Hmax
+            Hmax = H(iN);
+            Nmax=Narray(iN);
+        end
+    end
     
-  L=y(1)*k;
-  R = R_in_simple(inv,L,d,c,y(1),V0)
-  old_inv = inv/V0
-  inv0a = [inv0a,old_inv - V_equiv_energy_cost(c,1,d,y(1),R)] %c*4*pi/d/d/(2*sqrt(3)/3)*R*R*y(1)];
-  
-  f = R/n3;
-  D = f/f_number;
-  Deltaphi = d/f; %rad
-  
-  Ra=[Ra, R];
-  Da=[Da, D];
-  Ha=[Ha, -H];
-  inv2as=[inv2as (R+L)*(R+L)*(R+L)/K0]
-  
-end
+    % Taking the best among the ones tried, we use it
+    % as starting point of the optimization
+    options = optimset('TolX',1e-7);
+    fH = @(x) -InfSimp(x, Sf, inv, c);
+    [y,H] = fminsearch(fH, Nmax, options);
+    Ha(invi) = -H;
+    Da(invi) = y;
 
-La = Na*k
+R = K2R(inv/(4*pi/3), y(1), y(2), c, f_number, k, b, n3);
+
+
+volume_a(invi) = inv - V_equiv_energy_cost(c,b,y(1),y(2),R ); 
+volume_debugging_a(invi) = R2K(R,y(1),y(2),0,f_number,k,b,n3)*4*pi/3; 
+
+%% DEBUGGING - Uncomment this to test K2R with RK2
+%should_be_one = K2R(R2K(R,y(1),y(2),0,f_number,k,b,n3),y(1),y(2),0,f_number,k,b,n3)/R
+%%
+
+Ra(invi) = R;
+Hmaxa(invi) = Hmax; 
+end
