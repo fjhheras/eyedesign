@@ -1,9 +1,9 @@
 function [Da, Na, Ra, Ha, volume_a] = optimiseComp(c, inva, eye_type)
 
 if eye_type == 'fly'
-    b = 6 % Num rhabdomere in rhabdom
+    b = 6; % Num rhabdomere in rhabdom
 elseif eye_type == 'app'
-    b = 3
+    b = 3;
 else
     throw(MException('Wrong eye_type %s', eye_type))
 end
@@ -15,12 +15,12 @@ LoadConstants
 %LoadCalliphoraV0
 
 %% Parameters for fast test
-%DPoints=40;
-%NPoints=15;
+DPoints=32;
+NPoints=12;
 
 %% Parameter values for long computation
-DPoints=250;
-NPoints=80;
+%DPoints=250;
+%NPoints=80;
 
 %% Building arrays
 Darray = logspace(0.5,2.5,DPoints);
@@ -48,8 +48,8 @@ for inv = inva
 
     % Sampling a matrix of values to find a starting point for optimization
     Hmax=0;
-    Dmax =-1;
-    Nmax =-1;
+    Dmax = -1;
+    Nmax = -1;
     for iD=1:DPoints
         for iN = 1:NPoints
             H(iD,iN) = InfComp(Darray(iD),Narray(iN), Sf, inv, c, eye_type);

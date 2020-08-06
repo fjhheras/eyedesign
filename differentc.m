@@ -16,7 +16,8 @@ Haa = zeros(numc, num_inv);
 volume_aa = zeros(numc, num_inv);
 %parfor
 parfor i = 1:numc
-    [Da, Na, Ra, Ha, volume_a] = optimiseComp(c(i), inva, 'fly')
+    %[Da, Na, Ra, Ha, volume_a] = optimiseComp(c(i), inva, 'fly')
+    [Da, Na, Ra, Ha, volume_a] = optimiseSimp(c(i), inva)
     Naa(i,:) = Na
     Daa(i,:) = Da
     Haa(i,:) = Ha
@@ -30,7 +31,8 @@ csvwrite('num_mvilli.csv',Naa)
 csvwrite('lens_d_um.csv',Daa)
 csvwrite('information.csv',Haa)
 csvwrite('radius_um.csv',Raa)
-csvwrite('investment_mm3.csv',inva)
+csvwrite('investment_um3.csv',inva)
+csvwrite('volume_um3.csv',volume_aa)
 csvwrite('extra_cost_um3_per_microvilli.csv', c)
 
 figure(1)
